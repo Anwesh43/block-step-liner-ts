@@ -19,3 +19,29 @@ class ScaleUtil {
         return Math.sin(scale * Math.PI)
     }
 }
+
+class DrawingUtil {
+
+    static drawBlock(context : CanvasRenderingContext2D, i : number, scale : number) {
+        const wSize : number = w / blocks
+        const hSize : number = h / blocks
+        const sf : number = ScaleUtil.sinify(scale)
+        const sf1 : number = ScaleUtil.divideScale(sf, 0, 2)
+        const sf2 : number = ScaleUtil.divideScale(sf, 1, 2)
+        context.save()
+        context.translate(wSize * i * sf1, hSize * i)
+        context.fillRect(0, 0, wSize * sf2, hSize)
+        context.restore()
+    }
+
+    static drawBlocks(context : CanvasRenderingContext2D, scale : number) {
+        for (var i = 0; i < 5; i++) {
+            DrawingUtil.drawBlock(context, i, scale)
+        }
+    }
+
+    static drawBSNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        context.fillStyle = colors[i]
+        DrawingUtil.drawBlocks(context, scale)
+    }
+}
