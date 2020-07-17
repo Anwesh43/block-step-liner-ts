@@ -4,6 +4,7 @@ const w : number = window.innerWidth
 const h : number = window.innerHeight
 const backColor : string = "#BDBDBD"
 const colors : Array<string> = ["#009688", "#2196F3", "#f44336", "#4CAF50", "#3F51B5"]
+const delay : number = 20
 
 class ScaleUtil {
 
@@ -97,6 +98,26 @@ class State {
         if (this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
             cb()
+        }
+    }
+}
+
+class Animator {
+
+    animated : boolean = false
+    interval : number
+
+    start(cb : Function) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(cb, delay)
+        }
+    }
+
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
         }
     }
 }
