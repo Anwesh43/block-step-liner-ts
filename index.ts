@@ -186,3 +186,25 @@ class BlockStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    bs : BlockStep = new BlockStep()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.bs.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.bs.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.bs.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
