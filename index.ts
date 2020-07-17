@@ -1,10 +1,11 @@
 const blocks : number = 5
-const scGap : number = 0.02 / blocks
+const scGap : number = 0.02 / (blocks * 2)
 const w : number = window.innerWidth
 const h : number = window.innerHeight
 const backColor : string = "#BDBDBD"
 const colors : Array<string> = ["#009688", "#2196F3", "#f44336", "#4CAF50", "#3F51B5"]
 const delay : number = 20
+const strokeFactor : number = 90
 
 class ScaleUtil {
 
@@ -23,26 +24,43 @@ class ScaleUtil {
 
 class DrawingUtil {
 
+    static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y2)
+        context.stroke()
+    }
+
     static drawBlock(context : CanvasRenderingContext2D, i : number, scale : number) {
-        const wSize : number = w / blocks
+        const wSize : number = w / (blocks + 1)
         const hSize : number = h / blocks
         const sf : number = ScaleUtil.sinify(scale)
-        const sf1 : number = ScaleUtil.divideScale(sf, 0, 2)
-        const sf2 : number = ScaleUtil.divideScale(sf, 1, 2)
+        const sf1 : number = ScaleUtil.divideScale(sf, 0, 3)
+        const sf2 : number = ScaleUtil.divideScale(sf, 1, 3)
+        const sf3 : number = ScaleUtil.divideScale(sf, 2, 3)
+        const sf1i : number = ScaleUtil.divideScale(sf1, i, blocks)
+        const sf2i : number = ScaleUtil.divideScale(sf2, i, blocks)
+        const sf3i : number = ScaleUtil.divideScale(sf3, i, blocks)
         context.save()
-        context.translate(wSize * i * sf1, hSize * i)
-        context.fillRect(0, 0, wSize * sf2, hSize)
+        context.translate(wSize * (i + 1) * sf2i, hSize * i)
+        context.fillRect(0, 0, wSize * sf1i, hSize)
+        if (i != blocks - 1 && sf3i > 0) {
+            DrawingUtil.drawLine(context, wSize, 0, wSize + wSize * sf3i, hSize * sf3i)
+        }
         context.restore()
     }
 
     static drawBlocks(context : CanvasRenderingContext2D, scale : number) {
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < blocks; i++) {
             DrawingUtil.drawBlock(context, i, scale)
         }
     }
 
     static drawBSNode(context : CanvasRenderingContext2D, i : number, scale : number) {
         context.fillStyle = colors[i]
+        context.strokeStyle = colors[i]
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / strokeFactor
         DrawingUtil.drawBlocks(context, scale)
     }
 }
